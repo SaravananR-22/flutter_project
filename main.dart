@@ -1,103 +1,184 @@
 import 'package:flutter/material.dart';
 
-
-
 void main() {
   runApp(MainApp());
 }
 
 class MainApp extends StatefulWidget {
   @override
-  State<MainApp> createState() {
-    return MainAppState();
-  }
+  State<MainApp> createState() => _MainAppState();
 }
 
-class MainAppState extends State<MainApp> {
-  String displaytext = "Peacock";
-  TextEditingController textcontroller = TextEditingController();
-
-  List<String> items = []; 
+class _MainAppState extends State<MainApp> {
+  String inputvalue = "";
+  String calculatorvalue="";
+  String operator="";
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
-        appBar: AppBar(
-          title: Text(
-            "LIST TO DO APP",
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-              color: Colors.white,
-            ),
-          ),
-          backgroundColor: Colors.blue,
-          centerTitle: false,
-        ),
-        body: Column(
-          children: [
-            Row(
+        backgroundColor: Colors.black,
+        body: SafeArea(
+          child: SingleChildScrollView(
+            child: Column(
               children: [
-                Expanded(
-                  child: Container(
-                    padding: EdgeInsets.all(10),
-                    child: TextField(
-                      controller: textcontroller,
-                      decoration: InputDecoration(
-                        border: OutlineInputBorder(),
-                        label: Text("Enter The Data"),
-                      ),
+                // Display Area
+                Container(
+                  alignment: Alignment.bottomRight,
+                  padding: EdgeInsets.symmetric(horizontal: 20, vertical: 30),
+                  child: Text(
+                    inputvalue,
+                    style: TextStyle(
+                      fontSize: 60,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
                     ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ),
-                MaterialButton(
-                  onPressed: () {
-                    setState(() {
-                      items.add(textcontroller.text);
-                      textcontroller.clear();
-                    });
-                  },
-                  child: Text("Click"),
-                  color: Colors.blue,
-                  height: 50,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  textColor: Colors.white,
+
+                // Button Grid
+                Column(
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        calculator("7", Colors.white38),
+                        calculator("8", Colors.white38),
+                        calculator("9", Colors.white38),
+                        calculator("/", Colors.orange),
+                      ],
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        calculator("4", Colors.white38),
+                        calculator("5", Colors.white38),
+                        calculator("6", Colors.white38),
+                        calculator("*", Colors.orange),
+                      ],
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        calculator("1", Colors.white38),
+                        calculator("2", Colors.white38),
+                        calculator("3", Colors.white38),
+                        calculator("-", Colors.orange),
+                      ],
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        calculator("0", Colors.white38),
+                        calculator(".", Colors.white38),
+                        calculator("=", Colors.orange),
+                        calculator("+", Colors.orange),
+                      ],
+                    ),
+                  ],
                 ),
+
+                // Clear Button
+                calculator("clear", Colors.red),
               ],
             ),
-            Flexible(
-              child: ListView.builder(
-                itemCount: items.length,
-                itemBuilder: (context, index) {
-                  return Row(
-                    children: [
-                      Expanded(
-                        child: Container(
-                          padding: EdgeInsets.all(10),
-                          child: Text(items[index]),
-                        ),
-                      ),
-                      MaterialButton(
-                        child: Icon(Icons.delete),
-                        color: Colors.blue,
-                        onPressed: () {
-                          setState(() {
-                            items.removeAt(index);
-                          });
-                        },
-                      ),
-                    ],
-                  );
-                },
-              ),
-            ),
-          ],
+          ),
         ),
       ),
     );
   }
+
+  Widget calculator(String text, Color bgcolor) {
+    
+    return InkWell(
+      onTap: (){
+
+        if(text == "clear"){
+          setState(() {
+            inputvalue=" ";
+            calculatorvalue="";
+            operator="";
+          });
+        }
+        else if(text=="+" || text=="-" || text=="*" || text=="/"){
+            
+           setState(() {
+             calculatorvalue= inputvalue;
+             inputvalue="";
+             operator=text;
+           });
+        }
+        else if(text =="="){
+          setState(() {
+          double calc=double.parse(calculatorvalue);
+          double input=double.parse(inputvalue);
+
+          if(operator=="+"){
+            inputvalue=(calc +input).toString();
+          }
+          else if(operator=="-"){
+            inputvalue=(calc -input).toString();
+          }
+          else if(operator=="*"){
+            inputvalue=(calc *input).toString();
+          }
+          else if(operator=="/"){
+            inputvalue=(calc /input).toString();
+          }
+          else {
+          inputvalue = "Error";  // Handle division by zero
+        }
+          
+           
+            
+              
+           });
+          
+
+        }
+
+           
+
+
+
+        else{
+          setState(() {
+          inputvalue= inputvalue + text;
+        });
+
+        }
+
+        
+        
+      },
+
+    
+    
+    
+    child:Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(100),
+        color: bgcolor,
+      ),
+      height: MediaQuery.of(context).size.width / 5,
+      width: MediaQuery.of(context).size.width / 5,
+      alignment: Alignment.center,
+      margin: EdgeInsets.all(8),
+      child: Text(
+        text,
+        style: TextStyle(
+          fontSize: 22,
+          fontWeight: FontWeight.bold,
+          color: Colors.white,
+        ),
+      ),
+     ) );
+  }
 }
+
+
+
 
